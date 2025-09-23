@@ -1,10 +1,20 @@
-# Main Libraries
-numpy==1.26.4
+# Main libraries
 notebook==7.4.5
+numpy==1.26.4
 pandas==2.3.2
+scikit-learn==1.7.2
 tqdm==4.67.1
 
 #Ingest the data
 requests==2.31.0
 beautifulsoup4==4.13.5
 
+# viz 
+wordcloud==1.9.4
+matplotlib==3.10.6
+
+# AI Models
+mistralai==1.9.10
+
+# Interact with env 
+python-dotenv==1.1.1
