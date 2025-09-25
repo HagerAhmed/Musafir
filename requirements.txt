@@ -28,3 +28,5 @@ tiktoken==0.11.0
 # qdrant
 qdrant-client[fastembed]>=1.14.2
 uuid==1.30
+
+sentence-transformers==5.1.1
