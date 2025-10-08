@@ -12,7 +12,12 @@ That is just in my case
 # Shutdown Notebook
 `ctrl+c`
 
-pip install torchvision --trusted-host pypi.org --trusted-host files.pythonhosted.org
+pip install torchvision 
+pip install -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
 
 ```bash
     pip install -r requirements.txt```
+
+
+
+jupyter nbconvert --to script "3. Minisearch Text Evaluate.ipynb" --output-dir="../scripts"
