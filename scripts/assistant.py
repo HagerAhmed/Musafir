@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 from elasticsearch import Elasticsearch
 from sentence_transformers import SentenceTransformer
 
+from minsearch_client import minsearch_index as index
+
 os.environ["SSL_CERT_FILE"] = "/mnt/d/Travel Assistant/Musafir/Fortinet_CA_SSL(15).cer"
 os.environ["REQUESTS_CA_BUNDLE"] = "/mnt/d/Travel Assistant/Musafir/Fortinet_CA_SSL(15).cer"
 
@@ -111,6 +113,19 @@ def elastic_search_hybrid(field, query, vector, city, index_name_vec="traveller_
 
     return result_docs
 
+# Minsearch
+
+def minsearch_search_filter(query, city):
+    boost = {'text': 3.0, 'section': 0.5}
+    results = index.search(
+        query=query,
+        filter_dict={'city': city},
+        boost_dict=boost,
+        num_results=5
+    )
+    return results
+
+
 def build_prompt(query, search_results):
     context_template = "Q: {question}\n A: {text}"
 
@@ -210,8 +225,11 @@ def get_answer(query, city, model_choice, search_type):
     if search_type == 'Vector':
         vector = model.encode(query)
         search_results = elastic_search_hybrid("all_data_vector", query, vector, city) 
-    else:
+    elif search_type == 'Text':
         search_results = elastic_search_filter(query, city)
+    else:
+        search_type == "MinSearch"
+        search_results = minsearch_search_filter(query, city)
 
     prompt = build_prompt(query, search_results)
     answer, tokens, response_time = llm(prompt, model_choice)

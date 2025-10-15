@@ -46,7 +46,7 @@ def main():
     print_log(f"User selected model: {model_choice}")
 
     # Search type selection
-    search_type = st.radio("Select search type:", ["Text", "Vector"])
+    search_type = st.radio("Select search type:", ["Text", "Vector", "MinSearch"])
     print_log(f"User selected search type: {search_type}")
 
     # User input
