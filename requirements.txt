@@ -38,3 +38,11 @@ seaborn>=0.13.2
 rouge>=1.0.1
 
 streamlit>=1.50.0
+
+psycopg2-binary==2.9.11
+
+pgcli==4.3.0
+
+
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch==2.7.0
