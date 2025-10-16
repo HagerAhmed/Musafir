@@ -35,8 +35,11 @@ ANSWERS = [
 
 MODELS = ["mistral-medium-2508", "ministral-8b-latest", "mistral-small-latest"]
 RELEVANCE = ["RELEVANT", "PARTLY_RELEVANT", "NON_RELEVANT"]
+SEARCH_TYPES = ["Qdrant", "Elasticsearch_Vector", "Elasticsearch_Text", "MinSearch"]
 
-
+# ----------------------------
+# Synthetic Data Generation
+# ----------------------------
 def generate_synthetic_data(start_time, end_time):
     """Generate historical conversations for testing."""
     current_time = start_time
@@ -50,6 +53,7 @@ def generate_synthetic_data(start_time, end_time):
         answer = random.choice(ANSWERS)
         model = random.choice(MODELS)
         relevance = random.choice(RELEVANCE)
+        search_type = random.choice(SEARCH_TYPES)
 
         answer_data = {
             "answer": answer,
@@ -57,6 +61,7 @@ def generate_synthetic_data(start_time, end_time):
             "relevance": relevance,
             "relevance_explanation": f"This answer is {relevance.lower()} for the user query.",
             "model_used": model,
+            "search_type": search_type,
             "prompt_tokens": random.randint(50, 200),
             "completion_tokens": random.randint(50, 300),
             "total_tokens": random.randint(100, 500),
@@ -66,7 +71,7 @@ def generate_synthetic_data(start_time, end_time):
         }
 
         save_conversation(conversation_id, question, answer_data, city, current_time)
-        print(f"💾 Saved conversation ({city}, {model}, {relevance}) at {current_time}")
+        print(f"💾 Saved conversation ({city}, {model}, {search_type}, {relevance}) at {current_time}")
 
         # 70% of conversations get feedback
         if random.random() < 0.7:
@@ -83,6 +88,9 @@ def generate_synthetic_data(start_time, end_time):
     print(f"✅ Historical data generation complete. Total: {conversation_count} records.")
 
 
+# ----------------------------
+# Live Data Stream
+# ----------------------------
 def generate_live_data():
     """Continuously generate synthetic live conversations."""
     conversation_count = 0
@@ -96,6 +104,7 @@ def generate_live_data():
         answer = random.choice(ANSWERS)
         model = random.choice(MODELS)
         relevance = random.choice(RELEVANCE)
+        search_type = random.choice(SEARCH_TYPES)
 
         answer_data = {
             "answer": answer,
@@ -103,6 +112,7 @@ def generate_live_data():
             "relevance": relevance,
             "relevance_explanation": f"This answer is {relevance.lower()} to the query.",
             "model_used": model,
+            "search_type": search_type,
             "prompt_tokens": random.randint(60, 180),
             "completion_tokens": random.randint(40, 200),
             "total_tokens": random.randint(100, 350),
@@ -112,7 +122,7 @@ def generate_live_data():
         }
 
         save_conversation(conversation_id, question, answer_data, city, current_time)
-        print(f"💬 Live conversation ({city}, {model}, {relevance}) at {current_time}")
+        print(f"💬 Live conversation ({city}, {model}, {search_type}, {relevance}) at {current_time}")
 
         if random.random() < 0.7:
             feedback = 1 if random.random() < 0.8 else -1
@@ -126,6 +136,9 @@ def generate_live_data():
         time.sleep(1)
 
 
+# ----------------------------
+# Entry Point
+# ----------------------------
 if __name__ == "__main__":
     print(f"Script started at {datetime.now(tz)}")
     end_time = datetime.now(tz)
