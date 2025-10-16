@@ -16,7 +16,7 @@ services:
 
 
   qdrant:
-    image: qdrant/qdrant:v1.12.4
+    image: qdrant/qdrant:latest
     container_name: qdrant
     ports:
       - "6333:6333"
@@ -74,3 +74,4 @@ volumes:
   qdrant_storage:
   postgres_data:
   grafana_data:
+
