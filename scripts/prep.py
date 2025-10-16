@@ -48,7 +48,7 @@ def load_model():
     print(f"Loading model: {MODEL_NAME}")
     return SentenceTransformer(MODEL_NAME)
 
-
+# Setup Elasticsearch
 def setup_elasticsearch():
     print("Setting up Elasticsearch...")
     es_client = Elasticsearch(ELASTIC_URL)

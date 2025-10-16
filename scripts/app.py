@@ -46,7 +46,7 @@ def main():
     print_log(f"User selected model: {model_choice}")
 
     # Search type selection
-    search_type = st.radio("Select search type:", ["Text", "Vector", "MinSearch"])
+    search_type = st.radio("Select search type:", ["Qdrant", "Elasticsearch_Text", "Elasticsearch_Vector", "MinSearch"])
     print_log(f"User selected search type: {search_type}")
 
     # User input
@@ -70,6 +70,7 @@ def main():
             st.write(f"Relevance: {answer_data['relevance']}")
             st.write(f"Model used: {answer_data['model_used']}")
             st.write(f"Total tokens: {answer_data['total_tokens']}")
+            st.write(f"Search Method: {answer_data['search_type']}")
 
             # Save conversation to database
             print_log("Saving conversation to database")
@@ -122,6 +123,7 @@ def main():
         st.write(f"A: {conv['answer']}")
         st.write(f"Relevance: {conv['relevance']}")
         st.write(f"Model: {conv['model_used']}")
+        st.write(f"Search Method: {conv['search_type']}")
         st.write("---")
 
     # Display feedback stats

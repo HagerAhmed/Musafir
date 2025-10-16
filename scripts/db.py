@@ -41,6 +41,7 @@ def init_db():
                     eval_prompt_tokens INTEGER NOT NULL,
                     eval_completion_tokens INTEGER NOT NULL,
                     eval_total_tokens INTEGER NOT NULL,
+                    search_type TEXT NOT NULL,
                     timestamp TIMESTAMP WITH TIME ZONE NOT NULL
                 )
             """)
@@ -69,8 +70,8 @@ def save_conversation(conversation_id, question, answer_data, city, timestamp=No
                 INSERT INTO conversations 
                 (id, question, answer, city, model_used, response_time, relevance, 
                 relevance_explanation, prompt_tokens, completion_tokens, total_tokens, 
-                eval_prompt_tokens, eval_completion_tokens, eval_total_tokens, timestamp)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, COALESCE(%s, CURRENT_TIMESTAMP))
+                eval_prompt_tokens, eval_completion_tokens, eval_total_tokens, search_type, timestamp)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, COALESCE(%s, CURRENT_TIMESTAMP))
             """,
                 (
                     conversation_id,
@@ -87,6 +88,7 @@ def save_conversation(conversation_id, question, answer_data, city, timestamp=No
                     answer_data["eval_prompt_tokens"],
                     answer_data["eval_completion_tokens"],
                     answer_data["eval_total_tokens"],
+                    answer_data["search_type"],
                     timestamp,
                 ),
             )

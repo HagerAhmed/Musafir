@@ -11,6 +11,9 @@ from sentence_transformers import SentenceTransformer
 
 from minsearch_client import minsearch_index as index
 
+from qdrant_client import QdrantClient, models
+
+
 os.environ["SSL_CERT_FILE"] = "/mnt/d/Travel Assistant/Musafir/Fortinet_CA_SSL(15).cer"
 os.environ["REQUESTS_CA_BUNDLE"] = "/mnt/d/Travel Assistant/Musafir/Fortinet_CA_SSL(15).cer"
 
@@ -23,6 +26,8 @@ model = SentenceTransformer("multi-qa-distilbert-cos-v1")
 load_dotenv()  
 api_key = os.getenv("API_KEY")
 llm_client = Mistral(api_key = api_key)
+
+# Elasticsearch Text
 
 def elastic_search_filter(query, city, index_name="traveller_vector"):
     
@@ -61,7 +66,7 @@ def elastic_search_filter(query, city, index_name="traveller_vector"):
     
     return result_docs
 
-
+# Elasticsearch Vector
 def elastic_search_hybrid(field, query, vector, city, index_name_vec="traveller_vector"):
     knn_query = {
         "field": field,
@@ -113,8 +118,7 @@ def elastic_search_hybrid(field, query, vector, city, index_name_vec="traveller_
 
     return result_docs
 
-# Minsearch
-
+#Minsearch
 def minsearch_search_filter(query, city):
     boost = {'text': 3.0, 'section': 0.5}
     results = index.search(
@@ -125,7 +129,51 @@ def minsearch_search_filter(query, city):
     )
     return results
 
+QDRANT_URL = os.getenv("QDRANT_URL")
+qdrant_client = QdrantClient(url=QDRANT_URL)
+QDRANT_COLLECTION_NAME = os.getenv("QDRANT_COLLECTION_NAME")
+MODEL_HANDLE = os.getenv("MODEL_HANDLE")
 
+#Qdrant
+def qdrant_rrf_search(query: str, city: str, limit: int = 5) -> list[models.ScoredPoint]:
+    results = qdrant_client.query_points(
+        collection_name=QDRANT_COLLECTION_NAME,
+        prefetch=[
+            models.Prefetch(
+                query=models.Document(
+                    text=query,
+                    model=MODEL_HANDLE,
+                ),
+                using="jina-small",
+                limit=(5 * limit),
+            ),
+            models.Prefetch(
+                query=models.Document(
+                    text=query,
+                    model="Qdrant/bm25",
+                ),
+                using="bm25",
+                limit=(5 * limit),
+            ),
+        ],
+        query_filter=models.Filter(
+            must=[
+                models.FieldCondition(
+                    key="city",
+                    match=models.MatchValue(value=city)
+                )
+            ]
+        ),
+        query=models.FusionQuery(fusion=models.Fusion.RRF),
+        with_payload=True,
+        limit=limit,  # final number of results returned
+    )
+
+    return [
+    point.payload for point in results.points
+]
+
+# RAG Flow
 def build_prompt(query, search_results):
     context_template = "Q: {question}\n A: {text}"
 
@@ -222,11 +270,13 @@ it as "NON_RELEVANT", "PARTLY_RELEVANT", or "RELEVANT".
 
 
 def get_answer(query, city, model_choice, search_type):
-    if search_type == 'Vector':
+    if search_type == 'Elasticsearch_Vector':
         vector = model.encode(query)
         search_results = elastic_search_hybrid("all_data_vector", query, vector, city) 
-    elif search_type == 'Text':
+    elif search_type == 'Elasticsearch_Text':
         search_results = elastic_search_filter(query, city)
+    elif search_type == "Qdrant":
+        search_results = qdrant_rrf_search(query, city)
     else:
         search_type == "MinSearch"
         search_results = minsearch_search_filter(query, city)
@@ -248,5 +298,6 @@ def get_answer(query, city, model_choice, search_type):
         'total_tokens': tokens['total_tokens'],
         'eval_prompt_tokens': eval_tokens['prompt_tokens'],
         'eval_completion_tokens': eval_tokens['completion_tokens'],
-        'eval_total_tokens': eval_tokens['total_tokens']
+        'eval_total_tokens': eval_tokens['total_tokens'],
+        'search_type': search_type
     }
