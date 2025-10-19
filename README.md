@@ -251,7 +251,7 @@ query=models.FusionQuery(fusion=models.Fusion.RRF)
 
 ## 💻 Streamlit Interface & Application Workflow
 
-[🎬 Watch Demo Video](https://youtu.be/yxUEsKmmDQk)
+[![Watch the Demo](./images/demo_thumbnail.png)](https://youtu.be/yxUEsKmmDQk)
 
 Musafir provides an **interactive Streamlit interface** that allows users to explore destinations, ask travel-related questions, and receive AI-generated recommendations in real time.
 
