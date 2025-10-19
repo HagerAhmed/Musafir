@@ -173,7 +173,7 @@ streamlit run app.py
     - MinSearch (TF-IDF + Cosine Similarity)
     - Elasticsearch (Keyword + Vector Hybrid Search)
     - Qdrant (Hybrid Dense + Sparse Fusion)
-    
+
 3- **RAG Pipeline:** Retrieved context is passed to the language model (LLM) for response generation.
 
 4- **LLM (Mistral):** Generates contextual and informative travel recommendations.
@@ -249,3 +249,69 @@ It uses **Reciprocal Rank Fusion (RRF)** to combine dense and sparse embeddings 
 query=models.FusionQuery(fusion=models.Fusion.RRF)
 ```
 
+## 💻 Streamlit Interface & Application Workflow
+
+Musafir provides an **interactive Streamlit interface** that allows users to explore destinations, ask travel-related questions, and receive AI-generated recommendations in real time.
+
+---
+
+### Application Flow
+
+1. **Data Preparation & Indexing**
+
+   Before running the app, make sure the dataset and retrievers are properly set up.
+
+   - **Fetch and preprocess dataset:**  
+     ```bash
+     python prep.py
+     ```
+     This script retrieves and cleans travel data from Wikivoyage, then indexes it in **Elasticsearch**.
+
+   - **Index with MinSearch:**  
+     ```bash
+     python minsearch_client.py
+     ```
+     Builds a lightweight **TF-IDF**-based index for local text search.
+
+   - **Index with Qdrant:**  
+     ```bash
+     python qdrant.py
+     ```
+     Uploads embeddings and metadata to **Qdrant** for hybrid (dense + sparse) search.
+
+---
+
+2. **RAG Pipeline (Retrieval-Augmented Generation)**
+
+   - **Run the RAG Assistant:**
+     ```bash
+     python assistant.py
+     ```
+     This script defines the complete **RAG flow**, including:
+     - LLM selection and setup (Mistral)
+     - Integration with chosen retriever (MinSearch, Elasticsearch, or Qdrant)
+     - Prompt structure and response handling
+     - Mapping of LLM output relevance to user queries
+
+---
+
+3. **Database Initialization**
+
+   - **Initialize PostgreSQL Tables:**
+     ```bash
+     python db.py
+     ```
+     Creates two key tables:
+     - **conversation** → stores user questions, model answers, search method, model name, selected city, response time, and relevance, etc.  
+     - **feedback** → stores user feedback about the generated answers  
+
+---
+
+4. **Launch the Streamlit App**
+
+   Once everything is configured, start the interactive application with:
+   ```bash
+   streamlit run app.py
+    ```
+The application is available and running at:
+ **http://localhost:8501/**
