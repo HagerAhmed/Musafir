@@ -21,3 +21,10 @@ pip install -r requirements.txt --trusted-host pypi.org --trusted-host files.pyt
 
 
 jupyter nbconvert --to script "3. Minisearch Text Evaluate.ipynb" --output-dir="../scripts"
+
+streamlit run app.py
+
+
+Grafana 
+
+http://localhost:3000/public-dashboards/600e54ac9f4546a69474c4f4ffeaad1d
