@@ -47,9 +47,9 @@ def init_collection(collection_name: str):
                 "bm25": models.SparseVectorParams(modifier=models.Modifier.IDF)
             },
         )
-        print(f"✅ Created new collection: {collection_name}")
+        print(f"Created new collection: {collection_name}")
     except Exception as e:
-        print("❌ Error creating collection:", e)
+        print("Error creating collection:", e)
 
 
 # ==============================
@@ -58,7 +58,7 @@ def init_collection(collection_name: str):
 def index_documents(documents: list, collection_name: str):
     """Insert or update documents into Qdrant."""
     if not documents:
-        print("⚠️ No documents to index.")
+        print("No documents to index.")
         return
 
     print(f"📥 Indexing {len(documents)} documents...")
@@ -88,14 +88,14 @@ def index_documents(documents: list, collection_name: str):
     ]
 
     qdrant_client.upsert(collection_name=collection_name, points=points)
-    print(f"✅ Successfully indexed {len(points)} points.")
+    print(f"Successfully indexed {len(points)} points.")
 
 
 # ==============================
 # Main Workflow
 # ==============================
 def main(reindex: bool = True):
-    print("🚀 Starting Qdrant indexing process...")
+    print("Starting Qdrant indexing process...")
 
     # Step 1: Fetch data
     documents = fetch_documents()
@@ -106,9 +106,9 @@ def main(reindex: bool = True):
         init_collection(QDRANT_COLLECTION_NAME)
         index_documents(documents, QDRANT_COLLECTION_NAME)
     else:
-        print("⚙️ Skipping re-indexing (using existing collection).")
+        print("Skipping re-indexing (using existing collection).")
 
-    print("✅ Indexing process completed successfully!")
+    print("Indexing process completed successfully!")
 
 
 if __name__ == "__main__":
