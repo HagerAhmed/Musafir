@@ -251,6 +251,8 @@ query=models.FusionQuery(fusion=models.Fusion.RRF)
 
 ## 💻 Streamlit Interface & Application Workflow
 
+[🎬 Watch Demo Video](./images/screen-recording.webm)
+
 Musafir provides an **interactive Streamlit interface** that allows users to explore destinations, ask travel-related questions, and receive AI-generated recommendations in real time.
 
 ---
@@ -330,7 +332,7 @@ The Grafana dashboard provides valuable insights into:
 
 ---
 
-### 🌐 Accessing Grafana
+### Accessing Grafana
 
 ![Getting Started](./images/Grafana_all_charts.png)
 
@@ -401,3 +403,29 @@ Plots response time trends to identify latency issues or performance degradation
 
 Shows which models are used most often.
 Helps evaluate user preference and model performance trends.
+
+
+## Future Improvements & Next Steps
+
+---
+
+### Data Expansion & Customization
+
+* **Enhance the ingestion pipeline** to allow users to add their own cities dynamically.
+* **Incorporate user preferences** (budget, travel style, or interests) to generate more tailored travel recommendations.
+
+### LLM Evaluation & Monitoring
+
+* **Integrate Phoenix** for real-time LLM evaluation, tracing, and monitoring, helping to assess model performance and identify areas for improvement.
+
+### Model Flexibility
+
+* **Extend support for different LLMs** such as Groq, OpenAI models, and future open-weight models for better adaptability and cost-efficiency.
+
+### Scalability & Optimization
+
+* **Optimize retrieval and embedding pipelines** for larger datasets and multilingual support.
+* **Continue improving system monitoring and model feedback loops** for continuous learning.
+
+## Acknowledgements
+Special thanks to Alexey Grigorev and his team for the LLM Zoomcamp Project, which inspired the architecture and implementation of this application.
