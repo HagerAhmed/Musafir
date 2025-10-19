@@ -315,3 +315,89 @@ Musafir provides an **interactive Streamlit interface** that allows users to exp
     ```
 The application is available and running at:
  **http://localhost:8501/**
+
+
+ ## Monitoring Dashboard (Grafana)
+
+Musafir integrates **Grafana** for real-time monitoring of user interactions, model performance, and database activity.
+
+The Grafana dashboard provides valuable insights into:
+- Query trends  
+- Model usage  
+- Response times  
+- Feedback statistics  
+- City and search type analytics  
+
+---
+
+### 🌐 Accessing Grafana
+
+![Getting Started](./images/Grafana_all_charts.png)
+
+Once the Docker container or local server is running, Grafana can be accessed at:
+
+👉 **[http://localhost:3000](http://localhost:3000)**
+
+Login with your Grafana credentials (default: `admin / admin`) and select the **Travel Assistant  Dashboard**.
+
+---
+
+### Charts Explained
+
+#### **1️⃣ Recent Conversations Table**
+![Getting Started](./images/1_Grafana.png)
+
+Displays the five most recent conversations between the user and the assistant, including:
+
+- question → user query
+
+- answer → model response
+
+- city → selected travel city
+
+- search_type → retriever used (Elasticsearch, MinSearch, or Qdrant)
+
+- relevance → how relevant the answer was
+
+Useful for monitoring recent user activity and ensuring correct retrieval behavior.
+
+### 2️⃣ Search Type Distribution
+![Getting Started](./images/2_Grafana.png)
+
+Shows which retrieval method (e.g., Elasticsearch, Qdrant, or MinSearch) is used most frequently.
+Helps compare the popularity and performance of each retriever type.
+
+### 3️⃣ Relevance Distribution
+![Getting Started](./images/3_Grafana.png)
+
+Displays how many responses fall into each relevance category (e.g., RELEVANT, PARTLY_RELEVANT, NON_RELEVANT).
+Useful for tracking model accuracy and response quality over time.
+
+### 4️⃣ Average Tokens Over Time
+![Getting Started](./images/4_Grafana.png)
+
+Tracks the average number of tokens (input + output) used per query over time.
+This helps assess LLM cost efficiency and prompt optimization performance.
+
+### 5️⃣ Most searched Cities
+![Getting Started](./images/5_Grafana.png)
+
+Shows the most popular travel destinations users are exploring.
+Helps identify top-interest cities for users of Musafir.
+
+### 6️⃣ User Feedback Summary
+![Getting Started](./images/6_Grafana.png)
+
+Displays the total count of positive (👍) and negative (👎) feedback submitted by users.
+Provides a quick health check of user satisfaction with generated answers.
+
+### 7️⃣ Model Response Time Over Time
+![Getting Started](./images/7_Grafana.png)
+
+Plots response time trends to identify latency issues or performance degradation in model inference or retrieval speed.
+
+### 8️⃣ Model Usage Statistics
+![Getting Started](./images/8_Grafana.png)
+
+Shows which models are used most often.
+Helps evaluate user preference and model performance trends.
