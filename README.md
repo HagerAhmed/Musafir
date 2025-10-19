@@ -66,6 +66,15 @@ The collected data is organized into two stages:
 
 ## Tech Stack
 
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?logo=postgresql&logoColor=white)
+![Grafana](https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=white)
+![Elasticsearch](https://img.shields.io/badge/Elasticsearch-005571?logo=elasticsearch&logoColor=white)
+![Qdrant](https://img.shields.io/badge/Qdrant-FF6F00?logo=qdrant&logoColor=white)
+
+
 ### Core Components
 
 - **Programming Language:** Python  
@@ -122,7 +131,7 @@ pip install -r requirements.txt
 ```
 ### 4. Run with Docker
 ```bash
-docker compose up
+docker-compose up --build
 ```
 
 ### 5. Environment Variables
@@ -155,3 +164,88 @@ OPENAI_API_KEY=your_openai_api_key_here
 ```bash
 streamlit run app.py
 ```
+
+## System Workflow
+
+1. **User Query (Streamlit):** The user enters a travel-related question or request.
+
+2. **Search Engine:** The query is processed through one of the retrieval backends:
+    - MinSearch (TF-IDF + Cosine Similarity)
+    - Elasticsearch (Keyword + Vector Hybrid Search)
+    - Qdrant (Hybrid Dense + Sparse Fusion)
+    
+3- **RAG Pipeline:** Retrieved context is passed to the language model (LLM) for response generation.
+
+4- **LLM (Mistral):** Generates contextual and informative travel recommendations.
+
+5- **PostgreSQL:** Stores conversations, retrieved contexts, and user feedback.
+
+6- **Grafana:** Monitors system performance, user interactions, and feedback trends.
+
+
+## Search Evaluation & Selected Methods
+
+Musafir integrates multiple retrieval engines to ensure robust and flexible information access.  
+Each engine was evaluated using **Hit Rate** and **Mean Reciprocal Rank (MRR)** metrics to assess accuracy and ranking quality.
+
+- **Hit Rate** – Measures how often the correct answer appears in the top retrieved results.  
+- **Mean Reciprocal Rank (MRR)** – Evaluates how highly the correct answer is ranked within the result list.
+
+###  Summary of Evaluation Results
+
+ 1. **MinSearch**
+
+| Engine | Method | Hit Rate | MRR |
+|--------|---------|-----------|------|
+| **MinSearch** | Baseline | 0.8552 | 0.7136 |
+| **MinSearch** | City Filter | 0.8589 | **0.7565** |
+| **MinSearch** | Boosted | **0.8718** | 0.7259 |
+
+
+2. **Elasticsearch**
+
+| Engine | Method | Hit Rate | MRR |
+|--------|---------|-----------|------|
+| **Elasticsearch** | Baseline | 0.8630 | 0.7414 |
+| **Elasticsearch** | Filtered | 0.8538 | 0.7652 |
+| **Elasticsearch** | Text Hybrid | 0.8715 | 0.7861 |
+| **Elasticsearch** | All Data (Hybrid Vector) | **0.8751** | **0.7886** |
+
+3. **Qdrant**
+
+| Engine | Method | Hit Rate | MRR |
+|--------|---------|-----------|------|
+| **Qdrant** | Semantic (Baseline) | 0.8593 | 0.7513 |
+| **Qdrant** | Semantic (Filtered) | 0.8674 | 0.7655 |
+| **Qdrant** | Sparse BM25 | 0.8471 | 0.7387 |
+| **Qdrant** | Multi-step (Dense + Sparse) | 0.8667 | 0.7567 |
+| **Qdrant** | **Hybrid Dense + Sparse (RRF)** | **0.9153** | **0.8051** |
+
+---
+
+### Implementation Overview
+
+#### MinSearch
+A simple search index built using **TF-IDF** and **cosine similarity** for text fields, combined with exact matching for keyword fields.  
+Several configurations were tested, and the **City Filtered Search** setup was selected due to its better ranking quality (**MRR = 0.7565**) even though the boosted variant had a slightly higher Hit Rate.
+
+#### Elasticsearch
+Two main search strategies were implemented:
+
+- **`elastic_search_filter()`**  
+  Performs a multi-field keyword search (`city`, `section`, `subsection`, `text`) with a **city-based filter**.
+  
+- **`elastic_search_hybrid()`**  
+  Combines **keyword-based** and **vector-based retrieval**, both weighted and filtered by city relevance for improved contextual accuracy.
+
+The **hybrid vector search** variant (`all_data_es`) achieved the best overall Elasticsearch results with a **Hit Rate of 0.8751** and **MRR of 0.7886**.
+
+#### Qdrant
+Multiple configurations were tested, including **semantic**, **sparse (BM25)**, and **multi-step** searches.  
+The **Hybrid Dense + Sparse** approach achieved the **highest performance overall**, with **Hit Rate = 0.9153** and **MRR = 0.8051**.
+
+It uses **Reciprocal Rank Fusion (RRF)** to combine dense and sparse embeddings effectively:
+```python
+query=models.FusionQuery(fusion=models.Fusion.RRF)
+```
+
