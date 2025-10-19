@@ -12,30 +12,18 @@ ENV PYTHONUNBUFFERED=1
 # Create a working directory inside the container
 WORKDIR /app
 
-# Copy Fortinet certificate into container
-COPY Fortinet_CA_SSL(15).cer /usr/local/share/ca-certificates/Fortinet_CA_SSL.crt
-
 # Install system dependencies for psycopg2, numpy, pandas, etc.
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     gcc \
     curl \
-    ca-certificates \
-    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
-
-# Set certificate environment variables globally (so pip, requests, etc. trust Fortinet)
-ENV SSL_CERT_FILE=/usr/local/share/ca-certificates/Fortinet_CA_SSL.crt
-ENV REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/Fortinet_CA_SSL.crt    
 
 # Copy requirements.txt and install Python dependencies
 COPY requirements.txt .
 
 # Use psycopg2-binary instead of psycopg2 for easier installation
-# RUN pip install --no-cache-dir -r requirements.txt
-# RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host=files.pythonhosted.org --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt --trusted-host pypi.org --trusted-host files.pythonhosted.org
-
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy all project files into the container
 COPY . .
@@ -52,6 +40,7 @@ ENV STREAMLIT_SERVER_ADDRESS=0.0.0.0
 CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
 
 
+# Version with cert
 # # =========================
 # # Streamlit App Dockerfile
 # # =========================
@@ -66,12 +55,21 @@ CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0
 # # Create a working directory inside the container
 # WORKDIR /app
 
+# # Copy Fortinet certificate into container
+# COPY Fortinet_CA_SSL(15).cer /usr/local/share/ca-certificates/Fortinet_CA_SSL.crt
+
 # # Install system dependencies for psycopg2, numpy, pandas, etc.
 # RUN apt-get update && apt-get install -y \
 #     libpq-dev \
 #     gcc \
 #     curl \
+#     ca-certificates \
+#     && update-ca-certificates \
 #     && rm -rf /var/lib/apt/lists/*
+
+# # Set certificate environment variables globally (so pip, requests, etc. trust Fortinet)
+# ENV SSL_CERT_FILE=/usr/local/share/ca-certificates/Fortinet_CA_SSL.crt
+# ENV REQUESTS_CA_BUNDLE=/usr/local/share/ca-certificates/Fortinet_CA_SSL.crt    
 
 # # Copy requirements.txt and install Python dependencies
 # COPY requirements.txt .
