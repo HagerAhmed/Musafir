@@ -14,8 +14,8 @@ from minsearch_client import minsearch_index as index
 from qdrant_client import QdrantClient, models
 
 
-os.environ["SSL_CERT_FILE"] = "/mnt/d/Travel Assistant/Musafir/Fortinet_CA_SSL(15).cer"
-os.environ["REQUESTS_CA_BUNDLE"] = "/mnt/d/Travel Assistant/Musafir/Fortinet_CA_SSL(15).cer"
+# os.environ["SSL_CERT_FILE"] = "/mnt/d/Travel Assistant/Musafir/Fortinet_CA_SSL(15).cer"
+# os.environ["REQUESTS_CA_BUNDLE"] = "/mnt/d/Travel Assistant/Musafir/Fortinet_CA_SSL(15).cer"
 
 ELASTIC_URL = os.getenv("ELASTIC_URL_LOCAL", "http://localhost:9200")
 es_client = Elasticsearch(ELASTIC_URL)
